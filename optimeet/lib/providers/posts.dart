@@ -57,8 +57,7 @@ class Posts with ChangeNotifier {
 
 
   Future fetchAndSetPosts() async {
-    const url = "http://briddgy.herokuapp.com/api/orders/";
-    //http://briddgy.herokuapp.com/api/posts/?
+    String url = "http://briddgy.com/api/posts/";
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
       http.get(
@@ -79,6 +78,13 @@ class Posts with ChangeNotifier {
 
       String lang1 = extractedUserData['lang1'];  
       String lang2 = extractedUserData['lang2'];
+      if(lang1 != ""){
+        url = url + "/?lang1="+lang1;
+        if(lang2 != "false"){
+          url = url + "/&lang2="+lang2;
+      } 
+      }
+      
       
       http.get(
         url,
@@ -98,7 +104,7 @@ class Posts with ChangeNotifier {
 
   Future fetchAndSetMyOrders(myToken) async {
     var token = myToken;
-    const url = "http://briddgy.herokuapp.com/api/my/orders/";
+    const url = "http://briddgy.com/api/my/posts/";
     http.get(
       url,
       headers: {

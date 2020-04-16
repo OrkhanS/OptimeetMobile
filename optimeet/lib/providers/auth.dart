@@ -115,11 +115,12 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<void> signup(String email, String password, String firstname,
-      String lastname, String deviceID) async {
-    //return _authenticate(email, password, 'signupNewUser');
-
-    const url = "http://briddgy.herokuapp.com/api/users/";
+  Future<void> signup(String email, String password, String lang1,
+      String lang2, String deviceID) async {
+    if(lang2 == ""){
+      lang2="false";
+    }
+    const url = "http://briddgy.com/api/users/";
     try {
       final response = await http.post(
         url,
@@ -129,8 +130,8 @@ class Auth with ChangeNotifier {
             'email': email,
             'password': password,
             'password2': password,
-            'first_name': firstname,
-            'last_name': lastname,
+            'language1': lang1,
+            'language2': lang2,
             'deviceToken': deviceID,
 //            'returnSecureToken': true,
           },
@@ -158,6 +159,9 @@ class Auth with ChangeNotifier {
       final userData = json.encode(
         {
           'token': _token,
+          'lang1': lang1,
+          'lang2': lang2
+        
 //          'userId': _userId,
 //          'expiryDate': _expiryDate.toIso8601String(),
         },
@@ -170,7 +174,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> login(String email, String password, String deviceID) async {
-    const url = "http://briddgy.herokuapp.com/api/auth/";
+    const url = "http://briddgy.com/api/auth/";
     try {
       final response = await http.post(
         url,
@@ -180,7 +184,6 @@ class Auth with ChangeNotifier {
             'username': email,
             'password': password,
             'deviceToken': deviceID,
-//            'returnSecureToken': true,
           },
         ),
       );
@@ -202,12 +205,26 @@ class Auth with ChangeNotifier {
 //      );
 //      _autoLogout();
       notifyListeners();
+      const url1 = "http://briddgy.com/api/users/me/";
+    try {
+      final response = await http.get(
+        url1,
+        headers: {HttpHeaders.CONTENT_TYPE: "application/json",
+        "Authorization": "Token " + _token,
+        },
+      );
+      final responseData1 = json.decode(response.body);
+//      final responseData = response.body;
+//      if (responseData['error'] != null) {
+//        throw HttpException(responseData['error']['message']);
+//      }
       final prefs = await SharedPreferences.getInstance();
+
       final userData = json.encode(
         {
-          'token': _token,
-//          'userId': _userId,
-//          'expiryDate': _expiryDate.toIso8601String(),
+          'token':_token,
+          'lang1': responseData1["language1"],
+          'lang2:': responseData1["language2"]
         },
       );
       prefs.setString('userData', userData);
@@ -215,8 +232,14 @@ class Auth with ChangeNotifier {
       throw error;
     }
     //return _authenticate(email, password, 'verifyPassword');
+  }catch (error) {
+      throw error;
+    }
   }
-
+  
+  
+  
+  
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {

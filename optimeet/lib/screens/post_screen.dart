@@ -15,7 +15,7 @@ class PostScreen extends StatefulWidget {
   static const routeName = '/orders';
   var posts;
   var token, room, auth;
-  PostScreen({this.token, this.auth, this.room,this.posts});
+  PostScreen({this.token, this.auth, this.room, this.posts});
 
   @override
   _PostScreenState createState() => _PostScreenState();
@@ -46,6 +46,8 @@ class _PostScreenState extends State<PostScreen> {
   List _suggested = [];
   List _cities = [];
   List _orders = [];
+  int lines;
+  //lines[widget.posts.orders.length];
   final TextEditingController _typeAheadController = TextEditingController();
   final TextEditingController _typeAheadController2 = TextEditingController();
   final TextEditingController _typeAheadController3 = TextEditingController();
@@ -53,9 +55,11 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   void initState() {
-    // if (widget.widget.posts.myorders.isEmpty) {
-    //   widget.widget.posts.fetchAndSetOrders();
-    // }
+    if (widget.posts.myorders.isEmpty) {
+      widget.posts.fetchAndSetPosts();
+    }
+    // lines[widget.posts.orders.length] = [4];
+    lines = 4;
 
     super.initState();
   }
@@ -85,11 +89,12 @@ class _PostScreenState extends State<PostScreen> {
   void dispose() {
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     Future _loadData() async {
-      if (nextOrderURL.toString() != "null" && nextOrderURL.toString() != "FristCall") {
+      if (nextOrderURL.toString() != "null" &&
+          nextOrderURL.toString() != "FristCall") {
         String url = nextOrderURL;
         try {
           await http.get(
@@ -149,187 +154,164 @@ class _PostScreenState extends State<PostScreen> {
             title: Center(
               child: Text(
                 "Posts",
-                style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold),
               ),
             ),
             elevation: 1,
           ),
-          body: GestureDetector(
-            child: SingleChildScrollView(
-              child: Container(
-                height: MediaQuery.of(context).size.height * .83,
-                child: Column(
-                  children: <Widget>[
-                    
-                    Expanded(
-                      child: widget.posts.notLoadingOrders
-                          ? Center(child: CircularProgressIndicator())
-                          : NotificationListener<ScrollNotification>(
-                              onNotification: (ScrollNotification scrollInfo) {
-                                if (!_isfetchingnew && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                                  // start loading data
-                                  setState(() {
-                                    _isfetchingnew = true;
-                                    print("load order");
-                                  });
-                                  _loadData();
-                                }
-                              },
-                              child: ListView.builder(
-                                itemBuilder: (context, int i) {
-                                  return InkWell(
-                                    onTap: () {
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (__) => new ItemScreen(
-                                      //       id: _orders[i]["id"],
-                                      //       owner: _orders[i]["owner"],
-                                      //       title: _orders[i]["title"],
-                                      //       destination: _orders[i]["destination"],
-                                      //       source: _orders[i]["source"]["city_ascii"],
-                                      //       weight: _orders[i]["weight"],
-                                      //       price: _orders[i]["price"],
-                                      //       date: _orders[i]["date"],
-                                      //       description: _orders[i]["description"],
-                                      //       image: _orders[i]["orderimage"],
-                                      //       token: widget.token,
-                                      //       room: widget.room,
-                                      //       auth: widget.auth,
-                                      //     ),
-                                      //   ),
-                                      // );
-                                    },
-                                    child: Container(
-                                      height: 130,
-                                      padding: EdgeInsets.symmetric(horizontal: 10),
-                                      child: Card(
-                                        elevation: 4,
-                                        child: Row(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.all(Radius.circular(15)),
-                                                child: Image(
-                                                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                                                    if (loadingProgress == null) return child;
-                                                    return Center(
-                                                      child: CircularProgressIndicator(
-                                                        value: loadingProgress.expectedTotalBytes != null
-                                                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
-                                                            : null,
-                                                      ),
-                                                    );
-                                                  },
+          body: SingleChildScrollView(
+            child: Container(
+              color: Colors.blue[50],
+              height: MediaQuery.of(context).size.height * .83,
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child:
+                        // widget.posts.notLoadingOrders
+                        //     ? Center(child: CircularProgressIndicator())
+                        //     :
+                        NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scrollInfo) {
+                        if (!_isfetchingnew &&
+                            scrollInfo.metrics.pixels ==
+                                scrollInfo.metrics.maxScrollExtent) {
+                          // start loading data
+                          setState(() {
+                            _isfetchingnew = true;
+                            print("load order");
+                          });
+                          _loadData();
+                        }
+                      },
+                      child: ListView.builder(
+                        itemBuilder: (context, int i) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: .0),
+                            child: Card(
+                              elevation: 2,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
 
-                                                  image: NetworkImage(
-                                                      // "https://briddgy.herokuapp.com/media/" + _user["avatarpic"].toString() +"/"
-                                                      "https://picsum.photos/250?image=9"), //Todo,
-                                                ),
-                                              ),
+                                  // border: Border.all(),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                width: 200,
+                                child: Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 20,top: 10,
+                                          ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          Text(
+                                            "View count: 31", //todo orxanchal
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w300,
+                                              fontSize: 14,
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(12.0),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  SizedBox(
-                                                    width: 200,
-                                                    child: Text(
-//                                                    _orders[i]["title"].toString().length > 20
-//                                                        ? _orders[i]["title"].toString().substring(0, 20) + "..."
-//                                                        :
-                                                      _orders[i]["title"].toString(), //Todo: title
-                                                      overflow: TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.grey[800],
-//                                          fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        MdiIcons.mapMarkerMultipleOutline,
-                                                        color: Theme.of(context).primaryColor,
-                                                      ),
-                                                      SizedBox(
-                                                        width: 200,
-                                                        child: Text(
-                                                          _orders[i]["source"]["city_ascii"] + "  >  " + _orders[i]["destination"]["city_ascii"],
-                                                          //Todo: Source -> Destination
-                                                          maxLines: 1,
-                                                          style: TextStyle(fontSize: 15, color: Colors.grey[600], fontWeight: FontWeight.normal),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-//                                        mainAxisSize: MainAxisSize.max,
-                                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                    children: <Widget>[
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Icon(
-                                                            MdiIcons.calendarRange,
-                                                            color: Theme.of(context).primaryColor,
-                                                          ),
-                                                          Text(
-                                                            _orders[i]["date"].toString(),
-                                                            //Todo: date
-                                                            style: TextStyle(color: Colors.grey[600]),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        width: 50,
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Icon(
-                                                            Icons.attach_money,
-                                                            color: Theme.of(context).primaryColor,
-                                                          ),
-                                                          SizedBox(
-                                                            width: 50,
-                                                            child: Text(
-                                                              _orders[i]["price"].toString(),
-                                                              //Todo: date
-                                                              maxLines: 1,
-                                                              style: TextStyle(color: Colors.grey[600]),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  );
-                                },
-                                itemCount: _orders.length,
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: InkWell(
+                                        child: Container(
+                                          child: Text(
+                                            "Content ipspfpsf pofsdi fdContent ipspfpsf pofsdi fdspofsif so klfaskfa  ipspfpsf pofsdi fdspofsif so fuds fusd nfo kofwe fwpel nt ipspfpsf pofsdi fdspofsif so fuds fusd nfo one tro Content ipspfpsf pofsdi fdspofsif so klfaskfa  ipspfpsf pofsdi fdspofsif so fuds fusd nfo kofwe fwpel nt ipspfpsf pofsdi fdspofsif so fuds fusd nfo one tro Content ipspfpsf pofsdi fdspofsif so klfaskfa  ipspfpsf pofsdi fdspofsif so fuds fusd nfo kofwe fwpel nt ipspfpsf pofsdi fdspofsif so fuds fusd nfo one tro skfa  ipspfpsf pofsdi fdspofsif so fuds fusd nfo kofwe fwpel nt ipspfpsf pofsdi fdspofsif so fuds fusd nfo one tro ",
+                                            overflow: TextOverflow.ellipsis,
+                                            softWrap: true,
+                                            maxLines: lines,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            if (lines == 4)
+                                              lines = 50;
+                                            else
+                                              lines = 4;
+                                            print("lox");
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        // mainAxisAlignment:
+                                        //     MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Icon(
+                                            MdiIcons.genderMale,
+                                            color: Colors.lightBlue,
+                                          ), //todo orxan
+                                          Text(
+                                            "Anonymous",
+                                            style: TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w300,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: SizedBox(
+                                              height: 1,
+                                            ),
+                                          ),
+                                          FlatButton(
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  MdiIcons.chat,
+                                                  color: Colors.lightBlue,
+                                                ),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Text(
+                                                  "Message",
+                                                  style: TextStyle(
+                                                    fontSize: 17,
+                                                    color: Colors.lightBlue,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            onPressed: () {},
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                    ),
-                    Container(
-                      height: _isfetchingnew ? 50.0 : 0.0,
-                      color: Colors.transparent,
-                      child: Center(
-                        child: CircularProgressIndicator(),
+                          );
+                        },
+                        itemCount: 5,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    height: _isfetchingnew ? 50.0 : 0.0,
+                    color: Colors.transparent,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
