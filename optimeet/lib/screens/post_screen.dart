@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
+import 'package:flushbar/flushbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class _PostScreenState extends State<PostScreen> {
   List _suggested = [];
   List _cities = [];
   List _orders = [];
-  int lines;
+  List _lines = [];
   //lines[widget.posts.orders.length];
   final TextEditingController _typeAheadController = TextEditingController();
   final TextEditingController _typeAheadController2 = TextEditingController();
@@ -55,11 +56,9 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   void initState() {
-    if (widget.posts.myorders.isEmpty) {
+    if (widget.posts.orders.isEmpty) {
       widget.posts.fetchAndSetPosts();
     }
-    // lines[widget.posts.orders.length] = [4];
-    lines = 4;
 
     super.initState();
   }
@@ -89,7 +88,21 @@ class _PostScreenState extends State<PostScreen> {
   void dispose() {
     super.dispose();
   }
-
+Future createRooms(id) async {
+    String tokenforROOM = widget.token;
+    if (tokenforROOM != null) {
+      String url = "http://briddgy.com/api/chat/" + id.toString();
+      final response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.CONTENT_TYPE: "application/json",
+          "Authorization": "Token " + tokenforROOM,
+        },
+      );
+      widget.room.fetchAndSetRooms(widget.auth);
+    }
+    return null;
+  }
   @override
   Widget build(BuildContext context) {
     Future _loadData() async {
@@ -124,8 +137,13 @@ class _PostScreenState extends State<PostScreen> {
     //print(widget.orderstripsProvider.orders);
     return Consumer<Posts>(
       builder: (context, posts, child) {
-        if (widget.posts.orders.length != 0) {
+        int postLen = widget.posts.orders.length;
+        if (postLen != 0) {
           _orders = widget.posts.orders;
+          for(var i=0;i<postLen;i++){
+            _lines.add(4);
+          }
+
           if (nextOrderURL == "FirstCall") {
             nextOrderURL = widget.posts.detailsOrder["next"];
           }
@@ -168,141 +186,152 @@ class _PostScreenState extends State<PostScreen> {
               child: Column(
                 children: <Widget>[
                   Expanded(
-                    child:
-                        // widget.posts.notLoadingOrders
-                        //     ? Center(child: CircularProgressIndicator())
-                        //     :
-                        NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification scrollInfo) {
-                        if (!_isfetchingnew &&
-                            scrollInfo.metrics.pixels ==
-                                scrollInfo.metrics.maxScrollExtent) {
-                          // start loading data
-                          setState(() {
-                            _isfetchingnew = true;
-                            print("load order");
-                          });
-                          _loadData();
-                        }
-                      },
-                      child: ListView.builder(
-                        itemBuilder: (context, int i) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: .0),
-                            child: Card(
-                              elevation: 2,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
+                    child: widget.posts.notLoadingOrders
+                        ? Center(child: CircularProgressIndicator())
+                        : NotificationListener<ScrollNotification>(
+                            onNotification: (ScrollNotification scrollInfo) {
+                              if (!_isfetchingnew &&
+                                  scrollInfo.metrics.pixels ==
+                                      scrollInfo.metrics.maxScrollExtent) {
+                                // start loading data
+                                setState(() {
+                                  _isfetchingnew = true;
+                                  print("load order");
+                                });
+                                _loadData();
+                              }
+                            },
+                            child: ListView.builder(
+                              itemBuilder: (context, int i) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: .0),
+                                  child: Card(
+                                    elevation: 2,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
 
-                                  // border: Border.all(),
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                width: 200,
-                                child: Column(
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 20,top: 10,
-                                          ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          Text(
-                                            "View count: 31", //todo orxanchal
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w300,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
+                                        // border: Border.all(),
+                                        borderRadius: BorderRadius.circular(50),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: InkWell(
-                                        child: Container(
-                                          child: Text(
-                                            "Content ipspfpsf pofsdi fdContent ipspfpsf pofsdi fdspofsif so klfaskfa  ipspfpsf pofsdi fdspofsif so fuds fusd nfo kofwe fwpel nt ipspfpsf pofsdi fdspofsif so fuds fusd nfo one tro Content ipspfpsf pofsdi fdspofsif so klfaskfa  ipspfpsf pofsdi fdspofsif so fuds fusd nfo kofwe fwpel nt ipspfpsf pofsdi fdspofsif so fuds fusd nfo one tro Content ipspfpsf pofsdi fdspofsif so klfaskfa  ipspfpsf pofsdi fdspofsif so fuds fusd nfo kofwe fwpel nt ipspfpsf pofsdi fdspofsif so fuds fusd nfo one tro skfa  ipspfpsf pofsdi fdspofsif so fuds fusd nfo kofwe fwpel nt ipspfpsf pofsdi fdspofsif so fuds fusd nfo one tro ",
-                                            overflow: TextOverflow.ellipsis,
-                                            softWrap: true,
-                                            maxLines: lines,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            if (lines == 4)
-                                              lines = 50;
-                                            else
-                                              lines = 4;
-                                            print("lox");
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        // mainAxisAlignment:
-                                        //     MainAxisAlignment.spaceBetween,
+                                      width: 200,
+                                      child: Column(
                                         children: <Widget>[
-                                          Icon(
-                                            MdiIcons.genderMale,
-                                            color: Colors.lightBlue,
-                                          ), //todo orxan
-                                          Text(
-                                            "Anonymous",
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w300,
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 20,
+                                              top: 10,
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: SizedBox(
-                                              height: 1,
-                                            ),
-                                          ),
-                                          FlatButton(
                                             child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
                                               children: <Widget>[
-                                                Icon(
-                                                  MdiIcons.chat,
-                                                  color: Colors.lightBlue,
-                                                ),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
                                                 Text(
-                                                  "Message",
+                                                  "View count: 31", //todo orxanchal
                                                   style: TextStyle(
-                                                    fontSize: 17,
-                                                    color: Colors.lightBlue,
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 14,
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                            onPressed: () {},
-                                          )
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: InkWell(
+                                              child: Container(
+                                                child: Text(
+                                                  _orders[i]["content"].toString().length < 25 ? _orders[i]["content"].toString() + "                                      " : _orders[i]["content"].toString(),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  softWrap: true,
+                                                  maxLines: _lines[i],
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                setState(() {
+                                                  if (_lines[i] == 4)
+                                                    _lines[i] = 50;
+                                                  else
+                                                    _lines[i] = 4;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              // mainAxisAlignment:
+                                              //     MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Icon(
+                                                  MdiIcons.humanGreeting,
+                                                  color: Colors.lightBlue,
+                                                ),
+                                                Text(
+                                                  "Anonymous",
+                                                  style: TextStyle(
+                                                    color: Colors.black87,
+                                                    fontSize: 17,
+                                                    fontWeight: FontWeight.w300,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: SizedBox(
+                                                    height: 1,
+                                                  ),
+                                                ),
+                                                FlatButton(
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        MdiIcons.chat,
+                                                        color: Colors.lightBlue,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 8,
+                                                      ),
+                                                      Text(
+                                                        "Message",
+                                                        style: TextStyle(
+                                                          fontSize: 17,
+                                                          color:
+                                                              Colors.lightBlue,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  onPressed: () {
+                                                    createRooms(_orders[i]["ownerPost"]);
+                                                Flushbar(
+                                                title: widget.token != null ? "Conversation with has been started!" : "You should login first!",
+                                                message: widget.token != null ? "Check Chats to see more." : "Check Accounts to login.",
+                                                aroundPadding: const EdgeInsets.all(8),
+                                                borderRadius: 10,
+                                                duration: Duration(seconds: 5),
+                                              )..show(context) ;
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                );
+                              },
+                              itemCount: widget.posts.orders.length,
                             ),
-                          );
-                        },
-                        itemCount: 5,
-                      ),
-                    ),
+                          ),
                   ),
                   Container(
                     height: _isfetchingnew ? 50.0 : 0.0,

@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> {
 
         if (extractedUserData['token'] != null) {
           widget._channel = new IOWebSocketChannel.connect(
-              'ws://briddgy.herokuapp.com/ws/alert/?token=' +
+              'ws://briddgy.com/ws/alert/?token=' +
                   extractedUserData['token']);
           widget._channel.stream.listen(_onReceptionOfMessageFromServer);
           print("Alert Connected");

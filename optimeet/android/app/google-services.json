@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "594654393585",
+    "firebase_url": "https://babbltalk.firebaseio.com",
+    "project_id": "babbltalk",
+    "storage_bucket": "babbltalk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594654393585:android:615df1888c1efd6e756550",
+        "android_client_info": {
+          "package_name": "com.example.babbltalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "594654393585-16nklm6ifcag821vhiqasgie2rnd83nh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADt83U6-_3C9cPsKthN0Udp1vzSAXWOtI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "594654393585-16nklm6ifcag821vhiqasgie2rnd83nh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

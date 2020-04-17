@@ -48,27 +48,29 @@ class AuthCard extends StatefulWidget {
 class _AuthCardState extends State<AuthCard> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.Login;
+  String _value = "Language 1";
+  String _value2 = "Language 2";
+  String _value3 = "Male";
+
   Map<String, String> _authData = {
     'email': '',
     'password': '',
+    'gender':'M',
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String deviceToken;
-  // _getToken() {
-  //   _firebaseMessaging.getToken().then((device) {
-  //     deviceToken=device;
-  //   print(deviceToken);
+  _getToken() {
+    _firebaseMessaging.getToken().then((device) {
+      deviceToken = device;
+    });
+  }
 
-  //   });
-  //   print(deviceToken);
-  // }
- 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-   // _getToken();
+    _getToken();
   }
 
   void _showErrorDialog(String message) {
@@ -90,7 +92,6 @@ class _AuthCardState extends State<AuthCard> {
   }
 
   Future<void> _submit() async {
-  
     if (!_formKey.currentState.validate()) {
       // Invalid!
       return;
@@ -103,16 +104,24 @@ class _AuthCardState extends State<AuthCard> {
       if (_authMode == AuthMode.Login) {
         // Log user in
         await Provider.of<Auth>(context, listen: false)
-            .login(_authData['email'], _authData['password'], "");
-            // await Provider.of<Auth>(context, listen: false)
-            // .login(_authData['email'], _authData['password'], deviceToken);
+            .login(_authData['email'], _authData['password'], deviceToken);
+        // await Provider.of<Auth>(context, listen: false)
+        // .login(_authData['email'], _authData['password'], deviceToken);
       } else {
+        if (_value2 == "Language 2") {
+          _authData['language2'] = "false";
+        }
+        if (_value2 == _value) {
+          _authData['language2'] = "false";
+        }
+        
         // Sign user up
         await Provider.of<Auth>(context, listen: false).signup(
             _authData['email'],
             _authData['password'],
-            _authData['firstname'],
-            _authData['lastname'],
+            _authData['language1'],
+            _authData['language2'],
+            _authData['gender'],
             deviceToken);
       }
     } on HttpException catch (error) {
@@ -174,18 +183,58 @@ class _AuthCardState extends State<AuthCard> {
               SizedBox(
                 height: 30,
               ),
+              if (_authMode == AuthMode.Signup)
+                Container(
+                    width: deviceSize.width * 0.8,
+                    child: Row(
+                      children: <Widget>[
+                        Icon(MdiIcons.genderMale),
+                        Padding(
+                          padding: EdgeInsets.only(left: 15),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: 300.0,
+                            ),
+                            child: DropdownButton(
+                              hint: Text(_value3),
+                              items: [
+                                DropdownMenuItem(
+                                  value: "Male",
+                                  child: Text(
+                                    "Male",
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Female",
+                                  child: Text(
+                                    "Female",
+                                  ),
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  _value3 = value;
+                                  _authData['gender'] = _value3.substring(0,1);
+                                });
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    )),
+
               Container(
 //                padding: EdgeInsets.symmetric(horizontal: 15),
                 width: deviceSize.width * 0.8,
                 child: TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Email',
-                    icon: Icon(Icons.alternate_email),
+                    labelText: 'Username',
+                    icon: Icon(Icons.person_outline),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
-                    if (value.isEmpty || !value.contains('@')) {
-                      return 'Invalid email!';
+                    if (value.isEmpty || value.length < 5) {
+                      return 'Username exists!';
                     } else
                       return null; //Todo
                   },
@@ -196,34 +245,99 @@ class _AuthCardState extends State<AuthCard> {
               ),
               if (_authMode == AuthMode.Signup)
                 Container(
-                  width: deviceSize.width * 0.8,
-                  child: TextFormField(
-                    enabled: _authMode == AuthMode.Signup,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      icon: Icon(Icons.person_outline),
-                    ),
-                    //validator: _authMode == AuthMode.Signup ? (value) {} : null,
-                    onSaved: (value) {
-                      _authData['firstname'] = value;
-                    },
-                  ),
-                ),
-              if (_authMode == AuthMode.Signup)
-                Container(
-                  width: deviceSize.width * 0.8,
-                  child: TextFormField(
-                    enabled: _authMode == AuthMode.Signup,
-                    decoration: InputDecoration(
-                      labelText: 'Surname',
-                      icon: Icon(MdiIcons.accountTie),
-                    ),
-                    //validator: _authMode == AuthMode.Signup ? (value) {} : null,
-                    onSaved: (value) {
-                      _authData['lastname'] = value;
-                    },
-                  ),
-                ),
+                    width: deviceSize.width * 0.8,
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.language),
+                        Padding(
+                          padding: EdgeInsets.only(left: 15),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: 300.0,
+                            ),
+                            child: DropdownButton(
+                              hint: Text(_value),
+                              items: [
+                                DropdownMenuItem(
+                                  value: "Azerbaijani",
+                                  child: Text(
+                                    "Azərbaycanca",
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: "English",
+                                  child: Text(
+                                    "English",
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Russian",
+                                  child: Text(
+                                    "Pусский",
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Turkish",
+                                  child: Text(
+                                    "Türkçe",
+                                  ),
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  _value = value;
+                                  _authData['language1'] = _value;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 15),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: 300.0,
+                            ),
+                            child: DropdownButton(
+                              hint: Text(_value2),
+                              items: [
+                                DropdownMenuItem(
+                                  value: "Azerbaijani",
+                                  child: Text(
+                                    "Azərbaycanca",
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: "English",
+                                  child: Text(
+                                    "English",
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Russian",
+                                  child: Text(
+                                    "Pусский",
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: "Turkish",
+                                  child: Text(
+                                    "Türkçe",
+                                  ),
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  _value2 = value;
+                                  _authData['language2'] = _value2;
+                                });
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    )),
+
               Container(
                 width: deviceSize.width * 0.8,
                 child: TextFormField(
@@ -264,6 +378,7 @@ class _AuthCardState extends State<AuthCard> {
                         : null,
                   ),
                 ),
+
               SizedBox(
                 height: 10,
               ),
@@ -305,7 +420,7 @@ class _AuthCardState extends State<AuthCard> {
               //     _google(),
               //   ],
               // ),
-              
+
               SizedBox(
                 height: 20,
               ),
@@ -320,8 +435,7 @@ class _AuthCardState extends State<AuthCard> {
                         _authMode == AuthMode.Login ? 'LOG IN' : 'SIGN UP',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      onPressed: 
-                      _submit,
+                      onPressed: _submit,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -331,7 +445,6 @@ class _AuthCardState extends State<AuthCard> {
                       textColor:
                           Theme.of(context).primaryTextTheme.button.color,
                     ),
-               
                 ],
               ),
               SizedBox(height: 20),

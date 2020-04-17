@@ -22,15 +22,15 @@ class Posts with ChangeNotifier {
   bool get notLoadingOrders {
     return isLoadingOrders;
   }
-  
-  bool get notLoadedMyorders{
+
+  bool get notLoadedMyorders {
     return isLoadingMyOrders;
   }
-  
+
   bool get notLoaded {
     return isLoading;
   }
-  
+
   List get orders {
     return _posts;
   }
@@ -38,9 +38,11 @@ class Posts with ChangeNotifier {
   List get myorders {
     return _myposts;
   }
+
   Map get detailsOrder {
     return allOrdersDetails;
   }
+
   Map get detailsMyOrder {
     return allMyOrderDetails;
   }
@@ -54,7 +56,6 @@ class Posts with ChangeNotifier {
     _myposts = temporders;
     notifyListeners();
   }
-
 
   Future fetchAndSetPosts() async {
     String url = "http://briddgy.com/api/posts/";
@@ -76,28 +77,41 @@ class Posts with ChangeNotifier {
           json.decode(prefs.getString('userData')) as Map<String, Object>;
       token = extractedUserData['token'];
 
-      String lang1 = extractedUserData['lang1'];  
+      String lang1 = extractedUserData['lang1'];
       String lang2 = extractedUserData['lang2'];
-      if(lang1 != ""){
-        url = url + "/?lang1="+lang1;
-        if(lang2 != "false"){
-          url = url + "/&lang2="+lang2;
-      } 
+      if (lang1 != "" && lang1 != null) {
+        url = url + "/?lang1=" + lang1;
+        if (lang2 != "false" && lang2 != null) {
+          url = url + "/&lang2=" + lang2;
+        }
       }
-      
-      
-      http.get(
-        url,
-        headers: {
-          HttpHeaders.CONTENT_TYPE: "application/json",
-          "Authorization": "Token " + token,
-        },
-      ).then((onValue) {
-        final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
-        orders = dataOrders["results"];
-        allOrdersDetails = dataOrders;
-        isLoadingOrders = false;
-      });
+
+      if (token == null) {
+        http.get(
+          url,
+          headers: {
+            HttpHeaders.CONTENT_TYPE: "application/json",
+          },
+        ).then((onValue) {
+          final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
+          orders = dataOrders["results"];
+          allOrdersDetails = dataOrders;
+          isLoadingOrders = false;
+        });
+      } else {
+        http.get(
+          url,
+          headers: {
+            HttpHeaders.CONTENT_TYPE: "application/json",
+            "Authorization": "Token " + token,
+          },
+        ).then((onValue) {
+          final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
+          orders = dataOrders["results"];
+          allOrdersDetails = dataOrders;
+          isLoadingOrders = false;
+        });
+      }
     }
     return _posts;
   }

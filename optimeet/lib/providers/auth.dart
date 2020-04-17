@@ -51,7 +51,7 @@ class Auth with ChangeNotifier {
     final extractedUserData =
         json.decode(prefs.getString('userData')) as Map<String, Object>;
 
-    const url = "http://briddgy.herokuapp.com/api/users/me/";
+    const url = "http://briddgy.com/api/users/me/";
     try {
       final response = await http.get(
       url,
@@ -74,7 +74,7 @@ class Auth with ChangeNotifier {
       String email, String password, String urlSegment) async {
 //    final url =
 //        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/$urlSegment?key=AIzaSyC13spCwP_f_SalxEbkB-wjedoF8iYENlQ';
-    const url = "http://briddgy.herokuapp.com/api/auth/";
+    const url = "http://briddgy.com/api/auth/";
     try {
       final response = await http.post(
         url,
@@ -114,9 +114,10 @@ class Auth with ChangeNotifier {
       throw error;
     }
   }
+  
 
   Future<void> signup(String email, String password, String lang1,
-      String lang2, String deviceID) async {
+      String lang2, String gender, String deviceID) async {
     if(lang2 == ""){
       lang2="false";
     }
@@ -132,6 +133,7 @@ class Auth with ChangeNotifier {
             'password2': password,
             'language1': lang1,
             'language2': lang2,
+            'gender': gender,
             'deviceToken': deviceID,
 //            'returnSecureToken': true,
           },
@@ -140,20 +142,11 @@ class Auth with ChangeNotifier {
       final responseData = json.decode(response.body);
 //      final responseData = response.body;
       print("Token: $responseData");
-//      if (responseData['error'] != null) {
-//        throw HttpException(responseData['error']['message']);
-//      }
-      _token = responseData;
-//      _token = responseData['idToken'];
-//      _userId = responseData['localId'];
-//      _expiryDate = DateTime.now().add(
-//        Duration(
-//          seconds: int.parse(
-//            responseData['expiresIn'],
-//          ),
-//        ),
-//      );
-//      _autoLogout();
+     if (responseData['error'] != null) {
+       throw HttpException(responseData['error']['message']);
+     }
+      _token = responseData["token"];
+
       notifyListeners();
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode(
@@ -193,7 +186,7 @@ class Auth with ChangeNotifier {
 //      if (responseData['error'] != null) {
 //        throw HttpException(responseData['error']['message']);
 //      }
-      _token = responseData;
+      _token = responseData["token"];
 //      _token = responseData['idToken'];
 //      _userId = responseData['localId'];
 //      _expiryDate = DateTime.now().add(
