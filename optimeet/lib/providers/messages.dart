@@ -114,6 +114,7 @@ class Messages extends ChangeNotifier {
     readLastMessages(id);
     newMessage[id] = 0;
     //newMessage.remove(id);
+    // no need to remove id
   }
 
   bool get arethereNewMessage {
@@ -125,7 +126,6 @@ class Messages extends ChangeNotifier {
       return false;
     }
   }
-
   Future readLastMessages(id) async {
     var token = tokenforROOM;
     try {
@@ -145,7 +145,6 @@ class Messages extends ChangeNotifier {
   }
 
   //______________________________________________________________________________________
-
   bool changeChatRoomPlace(id) {
     newMessage[id] = 0;
     for (var i = 0; i < _chatRooms.length; i++) {
@@ -174,7 +173,7 @@ class Messages extends ChangeNotifier {
     tokenforROOM = extractedUserData['token'];
     try {
       if (extractedUserData['token'] != null) {
-        const url = "http://briddgy.herokuapp.com/api/chats/";
+        const url = "http://briddgy.com/api/chats/";
         final response = await http.get(
           url,
           headers: {

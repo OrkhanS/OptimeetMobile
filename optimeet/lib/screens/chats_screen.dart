@@ -52,6 +52,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
   @override
   void initState() {
     pageController = PageController(viewportFraction: viewportFraction);
+    if (widget.provider.chats.isEmpty) {
+      widget.provider.fetchAndSetRooms(widget.auth);
+    }
+
     super.initState();
   }
 

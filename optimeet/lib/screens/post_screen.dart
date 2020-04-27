@@ -227,13 +227,13 @@ Future createRooms(id) async {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.end,
                                               children: <Widget>[
-                                                Text(
-                                                  "View count: 31", //todo orxanchal
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w300,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
+                                                // Text(
+                                                //   "View count: 31", //todo orxanchal
+                                                //   style: TextStyle(
+                                                //     fontWeight: FontWeight.w300,
+                                                //     fontSize: 14,
+                                                //   ),
+                                                // ),
                                               ],
                                             ),
                                           ),

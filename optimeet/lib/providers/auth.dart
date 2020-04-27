@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/http_exception.dart';
 
 class Auth with ChangeNotifier {
-  String _token;
+  String token;
   DateTime _expiryDate;
   String _userId;
   Timer _authTimer;
@@ -15,20 +15,20 @@ class Auth with ChangeNotifier {
   bool isLoadingUser = true;
 
   bool get isAuth {
-    return _token != null;
+    return token != null;
   }
 
-  String get token {
+  String get token1 {
     if (_expiryDate != null &&
         _expiryDate.isAfter(DateTime.now()) &&
-        _token != null) {
-      return _token;
+        token != null) {
+      return token;
     }
     return null;
   }
 
-  set token(String tokenlox) {
-    _token = tokenlox;
+  set token1(String tokenlox) {
+    token = tokenlox;
   }
 
   String get userId {
@@ -90,7 +90,7 @@ class Auth with ChangeNotifier {
       if (responseData['error'] != null) {
         throw HttpException(responseData['error']['message']);
       }
-      _token = responseData['idToken'];
+      token = responseData['idToken'];
       _userId = responseData['localId'];
       _expiryDate = DateTime.now().add(
         Duration(
@@ -104,7 +104,7 @@ class Auth with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode(
         {
-          'token': _token,
+          'token': token,
           'userId': _userId,
           'expiryDate': _expiryDate.toIso8601String(),
         },
@@ -145,13 +145,13 @@ class Auth with ChangeNotifier {
      if (responseData['error'] != null) {
        throw HttpException(responseData['error']['message']);
      }
-      _token = responseData["token"];
+      token = responseData["token"];
 
       notifyListeners();
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode(
         {
-          'token': _token,
+          'token': token,
           'lang1': lang1,
           'lang2': lang2
         
@@ -186,7 +186,7 @@ class Auth with ChangeNotifier {
 //      if (responseData['error'] != null) {
 //        throw HttpException(responseData['error']['message']);
 //      }
-      _token = responseData["token"];
+      token = responseData["token"];
 //      _token = responseData['idToken'];
 //      _userId = responseData['localId'];
 //      _expiryDate = DateTime.now().add(
@@ -203,7 +203,7 @@ class Auth with ChangeNotifier {
       final response = await http.get(
         url1,
         headers: {HttpHeaders.CONTENT_TYPE: "application/json",
-        "Authorization": "Token " + _token,
+        "Authorization": "Token " + token,
         },
       );
       final responseData1 = json.decode(response.body);
@@ -215,7 +215,7 @@ class Auth with ChangeNotifier {
 
       final userData = json.encode(
         {
-          'token':_token,
+          'token':token,
           'lang1': responseData1["language1"],
           'lang2:': responseData1["language2"]
         },
@@ -245,7 +245,7 @@ class Auth with ChangeNotifier {
 //    if (expiryDate.isBefore(DateTime.now())) {
 //      return false;
 //    }
-    _token = extractedUserData['token'];
+    token = extractedUserData['token'];
 //    _userId = extractedUserData['userId'];
 //    _expiryDate = expiryDate;
     notifyListeners();
@@ -254,16 +254,16 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> logout(context) async {
-    print(_token);
+    print(token);
     const url = "http://briddgy.herokuapp.com/api/auth/";
     http.patch(url,
         headers: {
           HttpHeaders.CONTENT_TYPE: "application/json",
-          "Authorization": "Token " + _token,
+          "Authorization": "Token " + token,
         },
-        body: json.encode({"token": _token}));
+        body: json.encode({"token": token}));
 
-    _token = null;
+    token = null;
 //    _userId = null;
 //    _expiryDate = null;
 //    if (_authTimer != null) {

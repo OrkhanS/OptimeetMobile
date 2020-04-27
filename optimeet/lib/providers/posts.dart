@@ -80,9 +80,9 @@ class Posts with ChangeNotifier {
       String lang1 = extractedUserData['lang1'];
       String lang2 = extractedUserData['lang2'];
       if (lang1 != "" && lang1 != null) {
-        url = url + "/?lang1=" + lang1;
+        url = url + "/?lang=" + lang1;
         if (lang2 != "false" && lang2 != null) {
-          url = url + "/&lang2=" + lang2;
+          url = url + "&lang=" + lang2;
         }
       }
 
