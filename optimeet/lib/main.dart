@@ -21,6 +21,7 @@ import 'package:optimeet/providers/auth.dart';
 import './screens/account_screen.dart';
 import './screens/chats_screen.dart';
 import './screens/chat_window.dart';
+import 'models/api.dart';
 
 
 void main() => runApp(MyApp());
@@ -111,7 +112,7 @@ class _MyAppState extends State<MyApp> {
 
         if (extractedUserData['token'] != null) {
           widget._channel = new IOWebSocketChannel.connect(
-              'ws://briddgy.com/ws/alert/?token=' +
+              Api.socketConnectAlert +
                   extractedUserData['token']);
           widget._channel.stream.listen(_onReceptionOfMessageFromServer);
           print("Alert Connected");
@@ -245,10 +246,9 @@ class _MyAppState extends State<MyApp> {
                   setState(() => _currentIndex = index);
                 },
                 children: <Widget>[
-                  PostScreen(posts:posts),
+                  PostScreen(posts:posts, token: tokenforROOM,),
                   ChatsScreen(
                       provider: newmessage, auth: auth, token: tokenforROOM),
-                  
                   AccountScreen(
                       token: tokenforROOM,
                       auth: auth,),

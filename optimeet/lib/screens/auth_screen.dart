@@ -59,18 +59,18 @@ class _AuthCardState extends State<AuthCard> {
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  String deviceToken;
-  _getToken() {
-    _firebaseMessaging.getToken().then((device) {
-      deviceToken = device;
-    });
-  }
+  // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  // String deviceToken;
+  // _getToken() {
+  //   _firebaseMessaging.getToken().then((device) {
+  //     deviceToken = device;
+  //   });
+  // }
 
   @override
   void initState() {
     super.initState();
-    _getToken();
+    //_getToken();
   }
 
   void _showErrorDialog(String message) {
@@ -104,7 +104,7 @@ class _AuthCardState extends State<AuthCard> {
       if (_authMode == AuthMode.Login) {
         // Log user in
         await Provider.of<Auth>(context, listen: false)
-            .login(_authData['email'], _authData['password'], deviceToken);
+            .login(_authData['email'], _authData['password']);
         // await Provider.of<Auth>(context, listen: false)
         // .login(_authData['email'], _authData['password'], deviceToken);
       } else {
@@ -122,7 +122,7 @@ class _AuthCardState extends State<AuthCard> {
             _authData['language1'],
             _authData['language2'],
             _authData['gender'],
-            deviceToken);
+            );
       }
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';

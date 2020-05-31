@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import '../models/api.dart';
+
 
 class Messages extends ChangeNotifier {
   Map _messages = {};
@@ -27,7 +29,7 @@ class Messages extends ChangeNotifier {
 
   Future fetchAndSetMessages(int i) async {
     var token = tokenforROOM;
-    String url = "https://briddgy.herokuapp.com/api/chat/messages/?room_id=" +
+    String url = Api.messagesOfRoomID +
         _chatRooms[i]["id"].toString();
     try {
       await http.get(
@@ -129,7 +131,7 @@ class Messages extends ChangeNotifier {
   Future readLastMessages(id) async {
     var token = tokenforROOM;
     try {
-      const url = "http://briddgy.herokuapp.com/api/chat/readlast/";
+      const url = Api.readLastMessage;
 
       http.post(url,
           headers: {
@@ -173,7 +175,8 @@ class Messages extends ChangeNotifier {
     tokenforROOM = extractedUserData['token'];
     try {
       if (extractedUserData['token'] != null) {
-        const url = "http://briddgy.com/api/chats/";
+
+        const url = Api.listOfChats;
         final response = await http.get(
           url,
           headers: {
@@ -247,7 +250,7 @@ class Messages extends ChangeNotifier {
     auth.token = extractedUserData['token'];
     var token = extractedUserData['token'];
     try {
-      const url = "http://briddgy.herokuapp.com/api/users/me/";
+      const url = Api.myInfo;
 
       final response = await http.get(
         url,

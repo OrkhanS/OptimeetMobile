@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import '../models/api.dart';
 
 class Posts with ChangeNotifier {
   List _posts = [];
@@ -35,7 +36,7 @@ class Posts with ChangeNotifier {
     return _posts;
   }
 
-  List get myorders {
+  List get myPosts {
     return _myposts;
   }
 
@@ -58,7 +59,7 @@ class Posts with ChangeNotifier {
   }
 
   Future fetchAndSetPosts() async {
-    String url = "http://briddgy.com/api/posts/";
+    String url = Api.postListAndPost; 
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
       http.get(
@@ -80,7 +81,7 @@ class Posts with ChangeNotifier {
       String lang1 = extractedUserData['lang1'];
       String lang2 = extractedUserData['lang2'];
       if (lang1 != "" && lang1 != null) {
-        url = url + "/?lang=" + lang1;
+        url = url + "?lang=" + lang1;
         if (lang2 != "false" && lang2 != null) {
           url = url + "&lang=" + lang2;
         }
@@ -116,9 +117,23 @@ class Posts with ChangeNotifier {
     return _posts;
   }
 
-  Future fetchAndSetMyOrders(myToken) async {
+  Future addPosts(token, description, language) async {
+
+  const url = Api.postListAndPost;
+  http.post(url,
+      headers: {
+        HttpHeaders.CONTENT_TYPE: "application/json",
+        "Authorization": "Token " + token,
+      },
+      body: json.encode({
+        "content": description,
+        "lang": language,
+      }));
+  }
+
+  Future fetchAndSetMyPosts(myToken) async {
     var token = myToken;
-    const url = "http://briddgy.com/api/my/posts/";
+    String url = Api.myposts; 
     http.get(
       url,
       headers: {

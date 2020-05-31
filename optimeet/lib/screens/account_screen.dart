@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:optimeet/screens/myposts.dart';
 import 'package:provider/provider.dart';
 import './auth_screen.dart';
 import '../providers/auth.dart';
@@ -17,8 +18,10 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var auth = Provider.of<Auth>(context, listen: false);
     return Scaffold(
-      body: auth.isAuth
-          ? AccountPage(
+      body: 
+      auth.isAuth
+          ?
+           AccountPage(
               token: token,
               auth: auth,
               provider: orderstripsProvider,
@@ -30,7 +33,8 @@ class AccountScreen extends StatelessWidget {
                   //     ? SplashScreen()
                   //     : 
                       AuthScreen(),
-            ),
+            )
+          ,
     );
   }
 }
@@ -50,28 +54,6 @@ class _AccountPageState extends State<AccountPage> {
     super.initState();
   }
 
-  // Future fetchAndSetUserDetails() async {
-  //   // var token = Provider.of<Auth>(context, listen: false).token;
-  //   var token = widget.token;
-
-  //   const url = "http://briddgy.herokuapp.com/api/users/me/";
-  //   final response = await http.get(
-  //     url,
-  //     headers: {
-  //       HttpHeaders.CONTENT_TYPE: "application/json",
-  //       "Authorization": "Token " + token,
-  //     },
-  //   );
-
-  //   if (this.mounted) {
-  //     setState(() {
-  //       final dataOrders = json.decode(response.body) as Map<String, dynamic>;
-  //       _user = dataOrders;
-  //       isLoading = false;
-  //     });
-  //   }
-  //   return _user;
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -123,9 +105,10 @@ class _AccountPageState extends State<AccountPage> {
 //          )
 //        ],
       ),
-      body: widget.auth.isNotLoading
-          ? Center(child: CircularProgressIndicator())
-          : Center(
+       body:
+       // widget.auth.isNotLoading
+      //     ? Center(child: CircularProgressIndicator())
+           Center(
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
@@ -160,6 +143,7 @@ class _AccountPageState extends State<AccountPage> {
 //                  ),
                             ),
                             Column(
+                              
                               children: <Widget>[
                                 Text(
                                 "Anonymous User" 
@@ -188,99 +172,101 @@ class _AccountPageState extends State<AccountPage> {
                         ),
                     ),
                 
-                    Card(
-                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      elevation: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                        //   ListTile(
-                        //     leading: Icon(MdiIcons.mailboxOpenOutline),
-                        //     title: Text(
-                        //       "My Items",
-                        //       style: TextStyle(
-                        //         fontSize: 17,
-                        //         color: Colors.grey[600],
-                        //       ),
-                        //     ),
-                        //     trailing: Container(
-                        //         decoration: BoxDecoration(
-                        //           borderRadius:
-                        //               BorderRadius.all(Radius.circular(15)),
-                        //           color: Colors.grey[200],
-                        //         ),
-                        //         child: Icon(Icons.navigate_next)),
-                        //     onTap: () {
-                        //       Navigator.push(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //             builder: (__) => MyItems(
-                        //                   token: widget.token,
-                        //                   orderstripsProvider: widget.provider,
-                        //                 )),
-                        //       );
-                        //     },
-                        //   ),
-                        //   ListTile(
-                        //     leading: Icon(MdiIcons.mapMarkerPath),
-                        //     title: Text(
-                        //       "My Trips",
-                        //       style: TextStyle(
-                        //         fontSize: 17,
-                        //         color: Colors.grey[600],
-                        //       ),
-                        //     ),
-                        //     trailing: Container(
-                        //         decoration: BoxDecoration(
-                        //           borderRadius:
-                        //               BorderRadius.all(Radius.circular(15)),
-                        //           color: Colors.grey[200],
-                        //         ),
-                        //         child: Icon(Icons.navigate_next)),
-                        //     onTap: () {
-                        //       Navigator.push(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //             builder: (__) => MyTrips(
-                        //                   token: widget.token,
-                        //                   orderstripsProvider: widget.provider,
-                        //                 )),
-                        //       );
-                        //     },
-                        //   ),
-                        //   ListTile(
-                        //     leading: Icon(MdiIcons.scriptTextOutline),
-                        //     title: Text(
-                        //       "Accepted Deals",
-                        //       style: TextStyle(
-                        //         fontSize: 17,
-                        //         color: Colors.grey[600],
-                        //       ),
-                        //     ),
-                        //     trailing: Container(
-                        //         decoration: BoxDecoration(
-                        //           borderRadius:
-                        //               BorderRadius.all(Radius.circular(15)),
-                        //           color: Colors.grey[200],
-                        //         ),
-                        //         child: Icon(Icons.navigate_next)),
-                        //     onTap: () {
-                        //       Navigator.push(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //             builder: (__) => Contracts(
-                        //                   token: widget.token,
-                        //                 )),
-                        //       );
-                        //     },
-                        //   ),
-                        // 
-                        ],
-                      ),
-                    ),
+                    // Container(margin: EdgeInsets.only(top:10),
+                    //   child: Card(
+                    //     margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(15.0),
+                    //     ),
+                    //     elevation: 3,
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: <Widget>[
+                    //         ListTile(
+                    //           leading: Icon(MdiIcons.mailboxOpenOutline),
+                    //           title: Text( 
+                    //             "My Posts",
+                    //             style: TextStyle(
+                    //               fontSize: 17,
+                    //               color: Colors.grey[600],
+                    //             ),
+                    //           ),
+                    //           trailing: Container(
+                    //               decoration: BoxDecoration(
+                    //                 borderRadius:
+                    //                     BorderRadius.all(Radius.circular(15)),
+                    //                 color: Colors.grey[200],
+                    //               ),
+                    //               child: Icon(Icons.navigate_next)),
+                    //           onTap: () {
+                    //             Navigator.push(
+                    //               context,
+                    //               MaterialPageRoute(
+                    //                   builder: (__) => MyPosts(
+                    //                         token: widget.token,
+                    //                       )),
+                    //             );
+                    //           },
+                    //         ),
+                    //       //   ListTile(
+                    //       //     leading: Icon(MdiIcons.mapMarkerPath),
+                    //       //     title: Text(
+                    //       //       "My Trips",
+                    //       //       style: TextStyle(
+                    //       //         fontSize: 17,
+                    //       //         color: Colors.grey[600],
+                    //       //       ),
+                    //       //     ),
+                    //       //     trailing: Container(
+                    //       //         decoration: BoxDecoration(
+                    //       //           borderRadius:
+                    //       //               BorderRadius.all(Radius.circular(15)),
+                    //       //           color: Colors.grey[200],
+                    //       //         ),
+                    //       //         child: Icon(Icons.navigate_next)),
+                    //       //     onTap: () {
+                    //       //       Navigator.push(
+                    //       //         context,
+                    //       //         MaterialPageRoute(
+                    //       //             builder: (__) => MyTrips(
+                    //       //                   token: widget.token,
+                    //       //                   orderstripsProvider: widget.provider,
+                    //       //                 )),
+                    //       //       );
+                    //       //     },
+                    //       //   ),
+                    //       //   ListTile(
+                    //       //     leading: Icon(MdiIcons.scriptTextOutline),
+                    //       //     title: Text(
+                    //       //       "Accepted Deals",
+                    //       //       style: TextStyle(
+                    //       //         fontSize: 17,
+                    //       //         color: Colors.grey[600],
+                    //       //       ),
+                    //       //     ),
+                    //       //     trailing: Container(
+                    //       //         decoration: BoxDecoration(
+                    //       //           borderRadius:
+                    //       //               BorderRadius.all(Radius.circular(15)),
+                    //       //           color: Colors.grey[200],
+                    //       //         ),
+                    //       //         child: Icon(Icons.navigate_next)),
+                    //       //     onTap: () {
+                    //       //       Navigator.push(
+                    //       //         context,
+                    //       //         MaterialPageRoute(
+                    //       //             builder: (__) => Contracts(
+                    //       //                   token: widget.token,
+                    //       //                 )),
+                    //       //       );
+                    //       //     },
+                    //       //   ),
+                    //       // 
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                   
                     Card(
                       margin:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -291,6 +277,32 @@ class _AccountPageState extends State<AccountPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
+                          ListTile(
+                              leading: Icon(MdiIcons.mailboxOpenOutline),
+                              title: Text( 
+                                "My Posts",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              trailing: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15)),
+                                    color: Colors.grey[200],
+                                  ),
+                                  child: Icon(Icons.navigate_next)),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (__) => MyPosts(
+                                            token: widget.token,
+                                          )),
+                                );
+                              },
+                            ),
                           ListTile(
                             leading: Icon(MdiIcons.accountMultiplePlus),
                             title: Text(

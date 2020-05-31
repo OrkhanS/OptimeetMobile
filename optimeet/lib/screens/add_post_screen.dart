@@ -5,8 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:optimeet/providers/posts.dart';
 import 'package:provider/provider.dart';
 import 'package:flushbar/flushbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddItemScreen extends StatefulWidget {
   static const routeName = '/orders/add_item';
@@ -26,32 +28,32 @@ class _AddItemScreenState extends State<AddItemScreen> {
   List _suggested = [];
   List _cities = [];
   bool isLoading = true;
+  String token;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _typeAheadController = TextEditingController();
   final TextEditingController _typeAheadController2 = TextEditingController();
-
-  FutureOr<Iterable> getSuggestions(String pattern) async {
-    String url = "https://briddgy.herokuapp.com/api/cities/?search=" + pattern;
-    await http.get(
-      url,
-      headers: {HttpHeaders.CONTENT_TYPE: "application/json"},
-    ).then((response) {
-      setState(
-        () {
-          final dataOrders = json.decode(response.body) as Map<String, dynamic>;
-          _suggested = dataOrders["results"];
-          isLoading = false;
-        },
-      );
-    });
-    _cities = [];
-    for (var i = 0; i < _suggested.length; i++) {
-      _cities.add(_suggested[i]["city_ascii"].toString() + ", " + _suggested[i]["country"].toString() + ", " + _suggested[i]["id"].toString());
+   Future getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
     }
-    return _cities;
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
+    token = extractedUserData['token'];
   }
 
+
+  @override
+  void initState() {
+    if (widget.token == null || widget.token == "null") {
+      getToken();
+    }else{
+      token = widget.token;
+    }
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size.width;
@@ -67,7 +69,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
           },
         ),
         title: Text(
-          "Add Item", //Todo: item name
+          "Add Post",
           style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
         ),
         elevation: 1,
@@ -183,27 +185,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       ),
                     ),
                   ),
-                  onPressed: () {
-                    //var token = Provider.of<Auth>(context, listen: false).token;
-                    var token = widget.token;
-                    const url = "http://briddgy.herokuapp.com/api/orders/";
-                    http.post(url,
-                        headers: {
-                          HttpHeaders.CONTENT_TYPE: "application/json",
-                          "Authorization": "Token " + token,
-                        },
-                        body: json.encode({
-                          "title": title,
-                          "dimensions": 0,
-                          "source": from,
-                          "destination": to,
-                          "date": DateTime.now().toString().substring(0, 10),
-                          "address": "ads",
-                          "weight": weight,
-                          "price": price,
-                          "trip": null,
-                          "description": description
-                        }));
+                  onPressed: () {    
+                    if (token == null){
+                      getToken().whenComplete(() =>Provider.of<Posts>(context, listen: false).addPosts(widget.token, description, _value));
+                    }else{
+                      Provider.of<Posts>(context, listen: false).addPosts(widget.token, description, _value);
+                    }
+                    
                     Navigator.pop(context);
                     Flushbar(
                       title: "Item added",
